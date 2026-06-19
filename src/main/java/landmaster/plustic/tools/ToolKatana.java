@@ -86,7 +86,7 @@ public class ToolKatana extends SwordCore {
 	
 	@Nonnull
 	private ActionResult<ItemStack> _rightClick(@Nonnull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (!worldIn.isRemote && hand == EnumHand.MAIN_HAND && playerIn.getHeldItemOffhand() != null && !(playerIn.getHeldItemOffhand().getItem() instanceof Shuriken)) {
+		if (hand == EnumHand.MAIN_HAND && playerIn.getHeldItemOffhand() != null && !(playerIn.getHeldItemOffhand().getItem() instanceof Shuriken)) {
 			return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
 		}
 		return ActionResult.newResult(EnumActionResult.PASS, itemStackIn);
@@ -123,7 +123,7 @@ public class ToolKatana extends SwordCore {
 		if (!worldIn.isRemote) {
 			NBTTagCompound tag = TagUtil.getTagSafe(stack);
 			float counter = tag.getFloat(COUNTER_TAG);
-			counter -= 0.005f;
+			counter -= Config.katana_decay_rate;
 			counter = MathHelper.clamp(counter, 0, counter_cap(stack));
 			tag.setFloat(COUNTER_TAG, counter);
 			stack.setTagCompound(tag);
@@ -134,9 +134,6 @@ public class ToolKatana extends SwordCore {
 	public boolean dealDamage(ItemStack stack, EntityLivingBase player, Entity entity, float damage) {
 		if (entity instanceof EntityLivingBase) {
 			EntityLivingBase targetLiving = (EntityLivingBase)entity;
-			if (targetLiving.getTotalArmorValue() <= 0) {
-				damage += 2.6f; // increase damage against unarmored
-			}
 		}
 		NBTTagCompound tag = TagUtil.getTagSafe(stack);
 		float counter = tag.getFloat(COUNTER_TAG);
